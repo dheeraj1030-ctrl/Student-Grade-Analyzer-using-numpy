@@ -1,0 +1,39 @@
+{
+    "subjects": [
+        "Mathematics",
+        "Physics",
+        "Computer Science"
+    ],
+    "students": {
+        "Aarav Sharma": [
+            92.0,
+            88.5,
+            95.0
+        ],
+        "Diya Patel": [
+            78.0,
+            82.0,
+            80.0
+        ],
+        "Rohan Gupta": [
+            65.0,
+            70.0,
+            68.5
+        ],
+        "Sneha Rao": [
+            95.0,
+            91.0,
+            98.0
+        ],
+        "Dheeraj": [
+            67.0,
+            89.0,
+            100.0
+        ],
+        "Kritika": [
+            87.0,
+            65.0,
+            78.0
+        ]
+    }
+}
