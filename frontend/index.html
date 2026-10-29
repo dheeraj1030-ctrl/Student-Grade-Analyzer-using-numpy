@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Grade Analyzer</title>
+  <!-- Main stylesheet: Theme variables, layouts, and components -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ================================================================= -->
+  <!-- 1. TOP NAVBAR / HEADER                                            -->
+  <!-- ================================================================= -->
+  <header class="navbar">
+    <div class="brand">
+      <div class="brand-icon">📊</div>
+      <div>
+        <h1 class="brand-title">Student Grade Analyzer</h1>
+        <p class="brand-subtitle">NumPy-powered academic analytics & grade tracking</p>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <!-- Sync Status Badge (shows whether connected to Python server or local storage) -->
+      <span id="sync-status" class="status-badge status-loading" title="Data synchronization status">
+        <span class="status-dot"></span> <span id="sync-text">Checking connection...</span>
+      </span>
+      <button id="btn-open-subjects" class="btn btn-secondary">
+        <span>⚙️</span> Manage Subjects
+      </button>
+      <button id="btn-open-add-student" class="btn btn-primary">
+        <span>+</span> Add Student
+      </button>
+    </div>
+  </header>
+
+  <!-- ================================================================= -->
+  <!-- 2. MAIN CONTAINER                                                 -->
+  <!-- ================================================================= -->
+  <main class="container">
+
+    <!-- KPI / Metric Cards Section -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-icon">👥</div>
+        <div class="metric-data">
+          <span class="metric-label">Total Students</span>
+          <h3 id="stat-total-students" class="metric-value">0</h3>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">📚</div>
+        <div class="metric-data">
+          <span class="metric-label">Subjects</span>
+          <h3 id="stat-total-subjects" class="metric-value">0</h3>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-icon">📈</div>
+        <div class="metric-data">
+          <span class="metric-label">Class Average</span>
+          <h3 id="stat-class-average" class="metric-value">0.0%</h3>
+        </div>
+      </div>
+
+      <div class="metric-card highlight-card">
+        <div class="metric-icon">🏆</div>
+        <div class="metric-data">
+          <span class="metric-label">Top Performer</span>
+          <h3 id="stat-topper-name" class="metric-value">None</h3>
+          <span id="stat-topper-score" class="metric-subtext">Avg: 0.0%</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Navigation Tabs (Students Table vs Subject Analytics) -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="tab-students">👨‍🎓 Student Records</button>
+      <button class="tab-btn" data-tab="tab-subjects">📊 Subject Statistics</button>
+    </div>
+
+    <!-- =============================================================== -->
+    <!-- TAB 1: STUDENT RECORDS TABLE                                    -->
+    <!-- =============================================================== -->
+    <section id="tab-students" class="tab-pane active">
+      <div class="section-toolbar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="student-search" placeholder="Search student by name...">
+        </div>
+        <div class="toolbar-hint">Click column headers to sort</div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table" id="students-table">
+          <thead>
+            <tr id="table-header-row">
+              <!-- Dynamically populated by ui.js -->
+            </tr>
+          </thead>
+          <tbody id="students-table-body">
+            <!-- Dynamically populated by ui.js -->
+          </tbody>
+        </table>
+      </div>
+      <div id="no-students-placeholder" class="empty-state hidden">
+        <p>No student records found. Click <strong>+ Add Student</strong> to get started.</p>
+      </div>
+    </section>
+
+    <!-- =============================================================== -->
+    <!-- TAB 2: SUBJECT-WISE STATISTICAL ANALYSIS                        -->
+    <!-- =============================================================== -->
+    <section id="tab-subjects" class="tab-pane">
+      <div class="subject-analysis-grid" id="subject-cards-container">
+        <!-- Dynamically populated with subject statistical cards by ui.js -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================================================================= -->
+  <!-- 3. MODALS (DIALOGS)                                               -->
+  <!-- ================================================================= -->
+
+  <!-- Add / Edit Student Modal -->
+  <div id="modal-student" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 id="modal-student-title">Add Student Marks</h2>
+        <button class="modal-close" data-close="modal-student">&times;</button>
+      </div>
+      <form id="form-student">
+        <input type="hidden" id="edit-original-name" value="">
+        <div class="form-group">
+          <label for="student-name">Student Full Name</label>
+          <input type="text" id="student-name" required placeholder="e.g. Aarav Sharma">
+        </div>
+
+        <div class="form-group">
+          <label>Subject Marks (0 - 100)</label>
+          <div id="student-marks-fields" class="marks-input-grid">
+            <!-- Dynamically populated input fields per subject -->
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="modal-student">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Manage Subjects Modal -->
+  <div id="modal-subjects" class="modal-backdrop hidden">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2>Manage Subjects</h2>
+        <button class="modal-close" data-close="modal-subjects">&times;</button>
+      </div>
+      <form id="form-subjects">
+        <p class="modal-desc">
+          Enter subject names separated by commas. Existing marks will align with the new subject order.
+        </p>
+        <div class="form-group">
+          <label for="subjects-input">Subjects List</label>
+          <input type="text" id="subjects-input" required placeholder="Mathematics, Physics, Computer Science">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-close="modal-subjects">Cancel</button>
+          <button type="submit" class="btn btn-primary">Update Subjects</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ================================================================= -->
+  <!-- 4. MODULAR JAVASCRIPT FILES                                       -->
+  <!-- ================================================================= -->
+  <!-- analyzer.js: Pure mathematical calculations & grading scale       -->
+  <script src="js/analyzer.js"></script>
+  <!-- ui.js: DOM rendering for tables, metric cards, modals, and toasts  -->
+  <script src="js/ui.js"></script>
+  <!-- app.js: Controller linking UI events, state, and API sync        -->
+  <script src="js/app.js"></script>
+</body>
+</html>
