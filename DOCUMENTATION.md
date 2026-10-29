@@ -21,6 +21,7 @@ Welcome to the **Student Grade Analyzer** documentation. This project is built u
    - [`main` and Application Lifecycle](#main-and-application-lifecycle)
 5. [How to Run the Application](#5-how-to-run-the-application)
 6. [Adherence to Minimalist & DRY Principles](#6-adherence-to-minimalist--dry-principles)
+7. [Web Frontend Architecture & Folder Structure](#7-web-frontend-architecture--folder-structure)
 
 ---
 
@@ -317,3 +318,49 @@ In accordance with our project's `minimalist` guidelines:
    - `DATA_FILE` centrally handles file path configuration.
    - `load_data()` and `save_data()` isolate all file I/O.
 4. **Explicit Input Validation**: Centralized in `get_valid_float()` to prevent repeated `try-except` blocks.
+
+---
+
+## 7. Web Frontend Architecture & Folder Structure
+
+A modern, responsive, and minimalist web interface is provided in the `frontend/` directory.
+
+### Folder Structure
+```text
+Student Grade Analyzer/
+├── data/
+│   └── grades.json            # Shared persistent JSON database
+├── frontend/
+│   ├── index.html             # Structure, layouts, semantic containers & dialogs
+│   ├── css/
+│   │   └── style.css          # CSS Variables, dark-slate theme, tables, cards, responsive media queries
+│   └── js/
+│       ├── analyzer.js        # Mathematical & statistical calculation engine (DRY, mirrors numpy)
+│       ├── ui.js              # DOM presentation (renders tables, cards, badges, modals, toasts)
+│       └── app.js             # Controller wiring events, state management, and backend sync
+├── grade_analyzer.py          # Original CLI application with NumPy
+├── server.py                  # Zero-dependency local web server syncing data/grades.json
+└── DOCUMENTATION.md           # Project documentation
+```
+
+### Where to Make Changes Later
+
+| Want to change... | File to edit | What to look for |
+| :--- | :--- | :--- |
+| **Theme colors, fonts, card spacing** | `frontend/css/style.css` | Edit CSS variables under `:root` at the top of the file (`--bg-main`, `--primary`, etc.). |
+| **Grade thresholds or letter grades** | `frontend/js/analyzer.js` | Edit `GRADE_SCALE` constant at the top of `analyzer.js`. |
+| **HTML tags, dialogs, titles** | `frontend/index.html` | Semantic IDs (`#tab-students`, `#modal-student`, etc.). |
+| **Table formatting, badges, toast popups** | `frontend/js/ui.js` | `renderStudentTable()`, `renderSubjectCards()`, `openStudentModal()`. |
+| **Search behavior, sorting, button clicks** | `frontend/js/app.js` | Event listeners in `bindEvents()`. |
+
+### How to Launch the Web Frontend
+
+#### Option 1: Live Sync Mode with Python (Recommended)
+Runs the lightweight Python HTTP server (`server.py`) and syncs directly with `data/grades.json`:
+```powershell
+python server.py
+```
+Open **`http://localhost:8000`** in your browser.
+
+#### Option 2: Standalone / Offline Mode
+Directly double-click or open `frontend/index.html` in any web browser. The app will detect the offline environment and seamlessly save data to your browser's `localStorage`.
